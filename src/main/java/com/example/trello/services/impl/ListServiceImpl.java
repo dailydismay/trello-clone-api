@@ -53,4 +53,9 @@ public class ListServiceImpl implements ListService {
     public ListEntity findForUser(Long listId, Long userId) {
         return listRepo.findForUser(listId, userId).orElseThrow(() -> new NotFoundException("List not found"));
     }
+
+    public void deleteOne(Long listId, Long userId) {
+        ListEntity list = findForUser(listId, userId);
+        listRepo.delete(list);
+    }
 }

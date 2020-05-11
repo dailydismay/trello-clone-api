@@ -43,13 +43,14 @@ public class CardServiceImpl implements CardService {
                 .deadline(createCardDto.getDeadline())
                 .build();
 
-
+        log.info("Card was created in list with id " + listEntity.getId());
         return cardRepo.save(card);
     }
 
     public CardEntity archive(Long cardId, Long userId) {
         CardEntity card = cardRepo.findForUser(cardId, userId).orElseThrow(() -> new NotFoundException("Card not found"));
         card.setArchived(true);
+        log.info("Card with id " + card.getId() + " was archived");
         return cardRepo.save(card);
     }
 
@@ -57,6 +58,16 @@ public class CardServiceImpl implements CardService {
         CardEntity card = cardRepo.findForUser(cardId, userId).orElseThrow(() -> new NotFoundException("Card not found"));
         ListEntity list = listService.findForUser(listId, userId);
         card.setList(list);
+        log.info("card " + card.getId() + " was moved to list " + list.getId());
         return cardRepo.save(card);
+    }
+    public void deleteOne(Long cardId, Long userId) {
+        CardEntity card = cardRepo.findForUser(cardId, userId).orElseThrow(() -> new NotFoundException("Card not found"));
+        cardRepo.delete(card);
+        log.info("Card with id " + card.getId() + " was deleted");
+    }
+
+    public CardEntity findForUser(Long cardId, Long userId) {
+        return cardRepo.findForUser(cardId, userId).orElseThrow(() -> new NotFoundException("Card not found"));
     }
 }

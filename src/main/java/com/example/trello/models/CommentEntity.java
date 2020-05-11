@@ -1,5 +1,6 @@
 package com.example.trello.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,6 +37,10 @@ public class CommentEntity {
     @Column
     @CreationTimestamp
     private Date created;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    private CardEntity card;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")

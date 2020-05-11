@@ -15,7 +15,7 @@ public interface ListService {
             JwtUser userDetails
     );
 
-//    List<ListEntity> findForDesk(Long deskId, UserEntity userEntity);
     List<ListEntity> findForDesk(Long deskId, Long userId);
     ListEntity findForUser(Long listId, Long userId);
+    void deleteOne(Long listId, Long userId);
 }

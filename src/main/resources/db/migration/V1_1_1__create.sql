@@ -35,7 +35,6 @@ CREATE TABLE IF NOT EXISTS desks(
 );
 
 CREATE TABLE IF NOT EXISTS desks_users(
-  is_owner bool not null,
   user_id bigint not null,
   desk_id bigint not null,
   foreign key (user_id) references users(id),
@@ -56,7 +55,7 @@ CREATE TABLE IF NOT EXISTS lists(
     title varchar(255),
     created timestamp,
     desk_id bigint not null,
-    foreign key (desk_id) references desks(id)
+    foreign key (desk_id) references desks(id) on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS cards(
@@ -67,7 +66,7 @@ CREATE TABLE IF NOT EXISTS cards(
     deadline timestamp,
     created timestamp,
     list_id bigint not null,
-    foreign key (list_id) references lists(id)
+    foreign key (list_id) references lists(id) on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS comments(
@@ -76,8 +75,8 @@ CREATE TABLE IF NOT EXISTS comments(
    created timestamp,
    user_id bigint not null,
    card_id bigint not null,
-   foreign key (user_id) references users(id),
-   foreign key (card_id) references cards(id)
+   foreign key (user_id) references users(id) on delete cascade,
+   foreign key (card_id) references cards(id) on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS checks(
@@ -86,5 +85,5 @@ CREATE TABLE IF NOT EXISTS checks(
     done bool,
     card_id bigint not null,
     created timestamp,
-    foreign key (card_id) references cards(id)
+    foreign key (card_id) references cards(id) on delete cascade
 );

@@ -49,4 +49,13 @@ public class CardController {
     ) {
         return ResponseEntity.ok(cardService.move(id, listId, jwtUser.getId()));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity delete(
+            @AuthenticationPrincipal JwtUser jwtUser,
+            @PathVariable Long id
+    ) {
+        cardService.deleteOne(id, jwtUser.getId());
+        return ResponseEntity.status(204).build();
+    }
 }

@@ -19,11 +19,9 @@ import java.util.Map;
 public class ListController {
 
     private ListService listService;
-    private UserService userService;
 
     @Autowired
-    public ListController(ListService listService, UserService userService) {
-        this.userService = userService;
+    public ListController(ListService listService) {
         this.listService = listService;
     }
 
@@ -39,8 +37,17 @@ public class ListController {
     }
 
     @GetMapping
-    public ResponseEntity list(@AuthenticationPrincipal JwtUser userDetails,
+    public ResponseEntity list(@AuthenticationPrincipal JwtUser jwtUser,
                                @RequestParam Long deskId) {
-        return ResponseEntity.ok(listService.findForDesk(deskId, userDetails.getId()));
+        return ResponseEntity.ok(listService.findForDesk(deskId, jwtUser.getId()));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity delete(
+            @AuthenticationPrincipal JwtUser jwtUser,
+            @PathVariable Long id
+    ) {
+        listService.deleteOne(id, jwtUser.getId());
+        return ResponseEntity.status(204).build();
     }
 }
