@@ -5,6 +5,7 @@ import com.example.trello.models.ConfirmationEntity;
 import com.example.trello.models.UserEntity;
 import com.example.trello.repos.ConfirmationRepo;
 import com.example.trello.services.ConfirmationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,12 +14,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Service
+@Slf4j
 public class ConfirmationServiceImpl implements ConfirmationService {
     private ConfirmationRepo confirmationRepo;
 
     private JavaMailSender javaMailSender;
+    public static int noOfQuickServiceThreads = 20;
+    private ScheduledExecutorService quickService = Executors.newScheduledThreadPool(noOfQuickServiceThreads);
 
     @Async
     public void sendConfirmationEmail(String link, String emailAddress) {
@@ -29,7 +35,14 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         email.setText("To confirm your account, please click here : "
                 +"http://localhost:3000/api/confirmation?link="+link);
 
-        javaMailSender.send(email);
+        // run in extra thread
+        quickService.submit(() -> {
+            try{
+                javaMailSender.send(email);
+            }catch(Exception e){
+                log.error("Exception occur while send a mail : ",e);
+            }
+        });
     }
 
     @Autowired
