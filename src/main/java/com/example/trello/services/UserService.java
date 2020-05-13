@@ -10,4 +10,5 @@ public interface UserService {
     UserEntity register(RegisterDto registerDto);
     UserEntity findById(Long id);
     UserEntity findByEmail(String email);
+    boolean canLogin(UserEntity userEntity);
 }

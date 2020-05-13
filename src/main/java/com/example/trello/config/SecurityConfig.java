@@ -3,6 +3,7 @@ package com.example.trello.config;
 import com.example.trello.security.jwt.JwtConfigurer;
 import com.example.trello.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,9 +29,16 @@ import java.util.Collections;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtTokenProvider jwtTokenProvider;
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
     private final String AUTH_ENDPOINT = "/api/auth/**";
     private final String AUTH_ME_ENDPOINT = "/api/auth/me";
     private final String DESKS_ENDPOINT = "/api/desks/**";
+    private final String CARDS_ENDPOINT = "/api/cards/**";
+    private final String CHECKS_ENDPOINT = "/api/checks/**";
+    private final String COMMENTS_ENDPOINT = "/api/comments/**";
+    private final String LISTS_ENDPOINT = "/api/lists/**";
 
     @Bean
     @Override
@@ -50,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Collections.singletonList("http://localhost:8080"));
+        config.setAllowedOrigins(Collections.singletonList(frontendUrl));
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         source.registerCorsConfiguration("/**", config);
@@ -71,8 +79,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, AUTH_ME_ENDPOINT).authenticated()
                 .antMatchers(AUTH_ENDPOINT).permitAll()
-                .antMatchers(DESKS_ENDPOINT).authenticated()
-                .anyRequest().authenticated()
+                .antMatchers(DESKS_ENDPOINT, DESKS_ENDPOINT, COMMENTS_ENDPOINT, CHECKS_ENDPOINT, CARDS_ENDPOINT, LISTS_ENDPOINT).authenticated()
+                .anyRequest().permitAll()
                 .and()
         .apply(new JwtConfigurer(jwtTokenProvider));
     }
